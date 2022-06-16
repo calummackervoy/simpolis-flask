@@ -9,15 +9,12 @@ app = Flask(__name__)
 def main():
     return None, 204
 
-@app.route("/world/")
+@app.route("/world/", methods=['POST', 'GET'])
 def world():
     if request.method == 'POST':
-        g = json.loads(request.get_json()).serialize(format='json-ld')
-
-        for t in g:
-            print(str(t))
+        g = Graph().parse(data=json.dumps(request.get_json()), format='json-ld')
         
-        return jsonify({}), 200
+        return jsonify(g.serialize(format='json-ld')), 200
 
     data = {
         "@context": {
