@@ -19,9 +19,12 @@ def main():
 @app.route("/world/", methods=['POST', 'GET'])
 def world():
     if request.method == 'POST':
-        # g = Graph().parse(data=json.dumps(request.get_json()), format='json-ld')
-        # jsonld = json.loads(g.serialize(format='json-ld'))
-        jsonld = request.get_json()
+        g = Graph().parse(data=json.dumps(request.get_json()), format='json-ld')
+        jsonld = json.loads(g.serialize(format='json-ld'))
+        
+        return jsonify(jsonld), 200, {'Content-Type': 'application/ld+json'}
+
+        '''jsonld = request.get_json()
 
         # assign the graph an id
         if "@id" not in jsonld:
@@ -33,6 +36,9 @@ def world():
             jsonld,
             upsert=True
         )
-        return jsonify(jsonld), 200
+        return jsonify(jsonld), 200'''
 
-    return jsonify(json.loads(json_util.dumps(db.world.find_one()))), 200, {'Content-Type': 'application/ld+json'}
+    g = Graph().parse(data=json_util.dumps(db.world.find_one()), format='json-ld')
+    jsonld = json.loads(g.serialize(format='json-ld'))
+    return jsonify(jsonld), 200, {'Content-Type': 'application/ld+json'}
+    #return jsonify(json.loads(json_util.dumps(db.world.find_one()))), 200, {'Content-Type': 'application/ld+json'}
